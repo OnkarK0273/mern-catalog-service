@@ -148,3 +148,5 @@ certs/
 
 # public folder
 public/
+
+/config

@@ -1,11 +1,11 @@
 import app from './app';
-import { config } from './config';
 import logger from './config/logger';
+import config from 'config';
 
-const port = config.PORT;
+const port: number = config.get('server.port') || 5502;
 
 const server = app.listen(port, () => {
-  logger.info(`Server running on port ${port} in ${config.NODE_ENV} mode`);
+  logger.info(`Server running on port ${port}`);
 });
 
 // Handle unhandled promise rejections
