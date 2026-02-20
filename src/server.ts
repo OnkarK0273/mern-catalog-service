@@ -1,21 +1,23 @@
+import config from 'config';
 import app from './app';
 import logger from './config/logger';
-import config from 'config';
+import { initDb } from './config/db';
 
-const port: number = config.get('server.port') || 5502;
+const startServer = async () => {
+  const PORT: number = config.get('server.port') || 5502;
+  try {
+    await initDb();
+    logger.info('Database connected successfully');
 
-const server = app.listen(port, () => {
-  logger.info(`Server running on port ${port}`);
-});
+    app.listen(PORT, () => logger.info(`Listening on port ${PORT}`));
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      logger.error(err.message);
+      logger.on('finish', () => {
+        process.exit(1);
+      });
+    }
+  }
+};
 
-// Handle unhandled promise rejections
-process.on('unhandledRejection', (err: Error) => {
-  logger.error(`Unhandled Rejection: ${err.message}`);
-  server.close(() => process.exit(1));
-});
-
-// Handle uncaught exceptions
-process.on('uncaughtException', (err: Error) => {
-  logger.error(`Uncaught Exception: ${err.message}`);
-  process.exit(1);
-});
+void startServer();
