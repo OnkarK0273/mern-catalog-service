@@ -5,12 +5,15 @@ import { config } from './config';
 import logger from './config/logger';
 import { globalErrorHandler } from './common/middlewares/globalErrorHandler';
 import categoryRouter from './category/category-route';
+import cookieParser from 'cookie-parser';
+
 const app: Application = express();
 
 // Middlewares
 app.use(helmet());
 app.use(cors());
 app.use(express.json());
+app.use(cookieParser());
 // app.use(express.urlencoded({ extended: true }));
 app.use(
   cors({
