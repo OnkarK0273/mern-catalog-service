@@ -14,11 +14,16 @@ export default defineConfig(
     },
 
     rules: {
-      'no-console': 'warn',
-      'dot-notation': 'off',
-      '@typescript-eslint/no-unsafe-call': 'off',
-      '@typescript-eslint/no-unsafe-member-access': 'off',
+      'no-console': 'error',
+      'dot-notation': 'error',
+      '@typescript-eslint/require-await': 'off',
+      '@typescript-eslint/no-misused-promises': 'off',
+      '@typescript-eslint/unbound-method': 'off',
+      // todo: uncomment these after fixing ts errors.
       '@typescript-eslint/no-unsafe-assignment': 'off',
+      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-unsafe-argument': 'off',
+      '@typescript-eslint/ban-ts-comment': 'off',
     },
   },
   {
