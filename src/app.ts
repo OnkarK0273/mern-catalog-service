@@ -3,7 +3,7 @@ import helmet from 'helmet';
 import cors from 'cors';
 import { config } from './config';
 import logger from './config/logger';
-import { globalErrorHandler } from './middlewares/globalErrorHandler';
+import { globalErrorHandler } from './common/middlewares/globalErrorHandler';
 import categoryRouter from './category/category-route';
 const app: Application = express();
 

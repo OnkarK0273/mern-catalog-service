@@ -1,13 +1,13 @@
+import logger from '../../config/logger';
 import { NextFunction, Request, Response } from 'express';
 import { HttpError } from 'http-errors';
 import { v4 as uuidv4 } from 'uuid';
-import logger from '../config/logger';
 
 export const globalErrorHandler = (
   err: HttpError,
   req: Request,
   res: Response,
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+
   // @ts-ignore
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   next: NextFunction,
