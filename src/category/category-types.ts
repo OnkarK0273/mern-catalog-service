@@ -1,3 +1,5 @@
+import type { Request } from 'express';
+
 export interface PriceConfiguration {
   [key: string]: {
     priceType: 'base' | 'aditional';
@@ -16,4 +18,8 @@ export interface Category {
   name: string;
   priceConfiguration: PriceConfiguration;
   attributes: Attribute[];
+}
+
+export interface CreateCategoryRequest extends Request {
+  body: Category;
 }

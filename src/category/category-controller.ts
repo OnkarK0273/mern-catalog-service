@@ -3,7 +3,7 @@ import { CategoryService } from './category-service';
 import { Logger } from 'winston';
 import { validationResult } from 'express-validator';
 import createHttpError from 'http-errors';
-import { Category, PriceConfiguration } from './category-types';
+import { Category, CreateCategoryRequest, PriceConfiguration } from './category-types';
 
 export class CategoeryController {
   constructor(
@@ -11,12 +11,12 @@ export class CategoeryController {
     private logger: Logger,
   ) {}
 
-  create = async (req: Request, res: Response, next: NextFunction) => {
+  create = async (req: CreateCategoryRequest, res: Response, next: NextFunction) => {
     const result = validationResult(req);
     if (!result.isEmpty()) {
       return next(createHttpError(400, result.array()[0].msg as string));
     }
-    const { name, priceConfiguration, attributes } = req.body as Category;
+    const { name, priceConfiguration, attributes } = req.body;
 
     const category = await this.categoryService.create({
       name,
