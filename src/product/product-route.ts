@@ -9,6 +9,7 @@ import { ProductService } from './product-service';
 import fileUpload from 'express-fileupload';
 import { ImageKitStorage } from '../common/services/ImageKitStorage';
 import logger from '../config/logger';
+import updateProductValidator from './update-product-validator';
 
 const router = express.Router();
 const productService = new ProductService();
@@ -23,6 +24,16 @@ router.route('/').post(
   }),
   createProductValidator,
   asyncWrapper(productController.create),
+);
+
+router.route('/:id').patch(
+  authenticate,
+  canAccess([Roles.ADMIN, Roles.MANAGER]),
+  fileUpload({
+    limits: { fileSize: 500 * 1024 }, // 500kb
+  }),
+  updateProductValidator,
+  asyncWrapper(productController.update),
 );
 
 export default router;
