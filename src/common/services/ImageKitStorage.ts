@@ -15,9 +15,8 @@ export class ImageKitStorage implements FileStorage {
   async upload(data: FileData): Promise<FileUploadResult> {
     const fullPath = data.folder ? `${this.parentFolder}/${data.folder}` : this.parentFolder;
 
-    // Note: In @imagekit/nodejs, upload is scoped under the `files` namespace
     const response = await this.ik.files.upload({
-      file: data.fileData.toString('base64'), // Accepts Buffer, Base64 string, readable stream, or URL
+      file: data.fileData.toString('base64'),
       fileName: data.filename,
       folder: fullPath,
       useUniqueFileName: true,
@@ -45,7 +44,6 @@ export class ImageKitStorage implements FileStorage {
   }
 
   async delete(fileId: string): Promise<void> {
-    // In @imagekit/nodejs, deleteFile is replaced by `files.delete`
     await this.ik.files.delete(fileId);
   }
 }

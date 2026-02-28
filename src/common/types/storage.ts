@@ -1,6 +1,6 @@
 export interface FileData {
   filename: string;
-  fileData: Buffer<ArrayBufferLike>; // Updated for compatibility with imagekit-nodejs
+  fileData: Buffer<ArrayBufferLike>;
   folder?: string;
 }
 
