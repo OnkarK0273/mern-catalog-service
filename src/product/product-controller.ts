@@ -7,6 +7,8 @@ import { FileStorage } from '../common/types/storage';
 import { UploadedFile } from 'express-fileupload';
 import { v4 as uuidv4 } from 'uuid';
 import { Logger } from 'winston';
+import { AuthRequest } from '../common/types';
+import { Roles } from '../common/constants';
 
 export class ProductController {
   constructor(
@@ -74,6 +76,14 @@ export class ProductController {
     const existingProduct = await this.productService.getProductById(productId);
     if (!existingProduct) {
       return next(createHttpError(404, 'Product not found.'));
+    }
+
+    if ((req as AuthRequest).auth.role !== Roles.ADMIN) {
+      const tenant = (req as AuthRequest).auth.tenant;
+
+      if (existingProduct.tenantId !== tenant) {
+        return next(createHttpError(403, 'You are not allowed to access this product'));
+      }
     }
 
     // Default to the existing values
