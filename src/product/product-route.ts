@@ -7,19 +7,22 @@ import { asyncWrapper } from '../common/utils/wrapper';
 import createProductValidator from './create-product-validator';
 import { ProductService } from './product-service';
 import fileUpload from 'express-fileupload';
+import { ImageKitStorage } from '../common/services/ImageKitStorage';
+import logger from '../config/logger';
 
 const router = express.Router();
 const productService = new ProductService();
-const productController = new ProductController(productService);
+const imageKitStorage = new ImageKitStorage();
+const productController = new ProductController(productService, imageKitStorage, logger);
 
-router
-  .route('/')
-  .post(
-    authenticate,
-    canAccess([Roles.ADMIN, Roles.MANAGER]),
-    fileUpload(),
-    createProductValidator,
-    asyncWrapper(productController.create),
-  );
+router.route('/').post(
+  authenticate,
+  canAccess([Roles.ADMIN, Roles.MANAGER]),
+  fileUpload({
+    limits: { fileSize: 500 * 1024 }, // 500kb
+  }),
+  createProductValidator,
+  asyncWrapper(productController.create),
+);
 
 export default router;

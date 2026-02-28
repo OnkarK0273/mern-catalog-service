@@ -7,6 +7,7 @@ export interface Product {
   tenantId: string;
   categoryId: string;
   image: string;
+  imageFileId: string;
   isPublish: boolean;
 }
 

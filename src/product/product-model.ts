@@ -36,6 +36,7 @@ const productSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    imageFileId: { type: String, required: true },
     priceConfiguration: {
       type: Map,
       of: priceConfigurationSchema,
