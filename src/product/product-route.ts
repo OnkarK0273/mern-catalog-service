@@ -36,4 +36,6 @@ router.route('/:id').patch(
   asyncWrapper(productController.update),
 );
 
+router.route('/').get(asyncWrapper(productController.index));
+
 export default router;
