@@ -1,6 +1,7 @@
 import ImageKit from '@imagekit/nodejs';
 import config from 'config';
 import { FileData, FileStorage, FileUploadResult } from '../types/storage';
+import createHttpError from 'http-errors';
 
 export class ImageKitStorage implements FileStorage {
   private ik: ImageKit;
@@ -35,12 +36,13 @@ export class ImageKitStorage implements FileStorage {
   }
 
   getObjectUri(path: string, transformations: string = 'tr=f-auto'): string {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
-    const endpoint = config.get('imagekit.urlEndpoint') as string;
-    const baseUrl = endpoint.replace(/\/$/, '');
-    const cleanPath = path.startsWith('/') ? path : `/${path}`;
+    const baseUrl = config.get('imagekit.urlEndpoint');
 
-    return `${baseUrl}${cleanPath}?${transformations}`;
+    if (typeof baseUrl === 'string') {
+      return `${baseUrl}${path}?${transformations}`;
+    }
+    const error = createHttpError(500, 'Invalid S3 configuration');
+    throw error;
   }
 
   async delete(fileId: string): Promise<void> {
