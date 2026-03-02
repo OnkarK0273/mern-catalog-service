@@ -12,7 +12,7 @@ export class CategoryService {
     return await CategoryModel.find();
   }
 
-  async getOne(categoryId: string) {
+  async getById(categoryId: string) {
     return await CategoryModel.findOne({ _id: categoryId });
   }
 
