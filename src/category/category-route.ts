@@ -26,7 +26,7 @@ router.patch(
 );
 
 router.get('/', asyncWrapper(categoeryController.index));
-
 router.get('/:id', asyncWrapper(categoeryController.getOne));
+router.delete('/:id', asyncWrapper(categoeryController.delete));
 
 export default router;

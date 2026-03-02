@@ -84,4 +84,11 @@ export class CategoeryController {
     this.logger.info(`Getting category`, { id: category._id });
     res.json(category);
   };
+
+  delete = async (req: Request, res: Response) => {
+    const categoryId = req.params.id as string;
+    await this.categoryService.deleteById(categoryId);
+    this.logger.info(`Category has been deleted`, { id: categoryId });
+    res.json({ id: categoryId });
+  };
 }

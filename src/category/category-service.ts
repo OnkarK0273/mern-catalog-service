@@ -1,3 +1,4 @@
+import categoryModel from './category-model';
 import CategoryModel from './category-model';
 import { Category } from './category-types';
 
@@ -17,5 +18,9 @@ export class CategoryService {
 
   async update(categoryId: string, updateData: Partial<Category>): Promise<({ _id: string } & Category) | null> {
     return await CategoryModel.findByIdAndUpdate(categoryId, { $set: updateData }, { new: true });
+  }
+
+  async deleteById(categoryId: string) {
+    return await categoryModel.findByIdAndDelete(categoryId);
   }
 }
