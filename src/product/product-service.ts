@@ -7,10 +7,6 @@ export class ProductService {
     return (await productModel.create(product)) as Product;
   }
 
-  async getProductById(productId: string) {
-    return (await productModel.findById(productId)) as Product;
-  }
-
   async updateProduct(productId: string, product: Partial<Product>) {
     return (await productModel.findByIdAndUpdate(
       { _id: productId },
@@ -62,5 +58,13 @@ export class ProductService {
       ...paginateQuery,
       customLabels: paginationLabels,
     });
+  }
+
+  async getById(productId: string) {
+    return (await productModel.findById(productId)) as Product;
+  }
+
+  async deleteById(productId: string) {
+    await productModel.findByIdAndDelete(productId);
   }
 }

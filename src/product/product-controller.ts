@@ -74,7 +74,7 @@ export class ProductController {
 
     const productId = req.params.id as string;
 
-    const existingProduct = await this.productService.getProductById(productId);
+    const existingProduct = await this.productService.getById(productId);
     if (!existingProduct) {
       return next(createHttpError(404, 'Product not found.'));
     }
@@ -176,5 +176,25 @@ export class ProductController {
       pageSize: products.limit,
       currentPage: products.page,
     });
+  };
+
+  getOne = async (req: Request, res: Response, next: NextFunction) => {
+    const productId = req.params.id as string;
+
+    const product = await this.productService.getById(productId);
+
+    if (!product) {
+      return next(createHttpError(404, 'Product not found'));
+    }
+
+    this.logger.info(`Getting category`, { id: product._id });
+    res.json(product);
+  };
+
+  delete = async (req: Request, res: Response) => {
+    const productId = req.params.id as string;
+    await this.productService.deleteById(productId);
+    this.logger.info(`Category has been deleted`, { id: productId });
+    res.json({ id: productId });
   };
 }

@@ -37,5 +37,7 @@ router.route('/:id').patch(
 );
 
 router.route('/').get(asyncWrapper(productController.index));
+router.route('/:id').get(asyncWrapper(productController.getOne));
+router.route('/:id').delete(asyncWrapper(productController.delete));
 
 export default router;
