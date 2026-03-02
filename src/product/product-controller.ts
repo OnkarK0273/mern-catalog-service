@@ -1,7 +1,7 @@
 import { validationResult } from 'express-validator';
 import createHttpError from 'http-errors';
 import { NextFunction, Response, Request } from 'express';
-import { CreateProductRequest, Filter, Product } from './product-type';
+import { CreateProductRequest, Filter, PaginateQuery, Product } from './product-type';
 import { ProductService } from './product-service';
 import { FileStorage } from '../common/types/storage';
 import { UploadedFile } from 'express-fileupload';
@@ -142,9 +142,17 @@ export class ProductController {
   };
 
   index = async (req: Request, res: Response) => {
-    const { q, tenantId, categoryId, isPublish } = req.query;
+    const { q, tenantId, categoryId, isPublish, page, limit } = req.query;
 
     const filters: Filter = {};
+    const paginate: PaginateQuery = {
+      page: 1,
+      limit: 10,
+    };
+
+    if (page) paginate.page = parseInt(page as string);
+
+    if (limit) paginate.limit = parseInt(limit as string);
 
     if (isPublish === 'true') filters.isPublish = true;
 
@@ -153,7 +161,7 @@ export class ProductController {
     if (categoryId && mongoose.Types.ObjectId.isValid(categoryId as string))
       filters.categoryId = new mongoose.Types.ObjectId(categoryId as string);
 
-    const products = await this.productService.getProducts(q as string, filters);
+    const products = await this.productService.getProducts(q as string, filters, paginate);
 
     res.json(products);
   };
