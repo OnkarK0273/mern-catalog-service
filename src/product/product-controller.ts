@@ -191,8 +191,20 @@ export class ProductController {
     res.json(product);
   };
 
-  delete = async (req: Request, res: Response) => {
+  delete = async (req: Request, res: Response, next: NextFunction) => {
     const productId = req.params.id as string;
+
+    const product = await this.productService.getById(productId);
+
+    if (product.imageFileId) {
+      try {
+        await this.storage.delete(product.imageFileId);
+        this.logger.info(`Product image has been deleted`, { id: product.imageFileId });
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      } catch (error) {
+        return next(createHttpError(400, 'Failed to delete old image from ImageKit:'));
+      }
+    }
     await this.productService.deleteById(productId);
     this.logger.info(`Category has been deleted`, { id: productId });
     res.json({ id: productId });
