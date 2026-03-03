@@ -6,6 +6,7 @@ import logger from './config/logger';
 import { globalErrorHandler } from './common/middlewares/globalErrorHandler';
 import categoryRouter from './category/category-route';
 import productRouter from './product/product-route';
+import toppingRouter from './topping/topping-route';
 import cookieParser from 'cookie-parser';
 
 const app: Application = express();
@@ -30,6 +31,7 @@ app.use((req, res, next) => {
 
 app.use('/categories', categoryRouter);
 app.use('/products', productRouter);
+app.use('/topping', toppingRouter);
 
 // Routes
 app.get('/health', (req: Request, res: Response) => {
