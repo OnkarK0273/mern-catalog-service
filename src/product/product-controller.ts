@@ -163,6 +163,7 @@ export class ProductController {
 
     const products = await this.productService.getProducts(q as string, filters, paginate);
 
+    // console.log('products', products);
     const finalProducts = (products.data as Product[]).map((product: Product) => {
       return {
         ...product,
@@ -173,8 +174,8 @@ export class ProductController {
     res.json({
       data: finalProducts,
       total: products.total,
-      pageSize: products.limit,
-      currentPage: products.page,
+      pageSize: products.pageSize,
+      currentPage: products.currentPage,
     });
   };
 

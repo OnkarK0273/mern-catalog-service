@@ -21,6 +21,7 @@ export interface Filter {
   tenantId?: string;
   categoryId?: mongoose.Types.ObjectId;
   isPublish?: boolean;
+  name?: RegExp;
 }
 
 export interface PaginateQuery {

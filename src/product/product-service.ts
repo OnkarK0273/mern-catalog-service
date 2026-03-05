@@ -20,12 +20,12 @@ export class ProductService {
   }
 
   async getProducts(q: string, filters: Filter, paginateQuery: PaginateQuery) {
-    const searchQueryRegexp = new RegExp(q, 'i');
+    const matchQuery: Filter = { ...filters };
 
-    const matchQuery = {
-      ...filters,
-      name: searchQueryRegexp,
-    };
+    // 2. Conditionally add the search query if 'q' is present
+    if (q) {
+      matchQuery.name = new RegExp(q, 'i');
+    }
 
     const aggregate = productModel.aggregate([
       {
@@ -50,7 +50,10 @@ export class ProductService {
         },
       },
       {
-        $unwind: '$category',
+        $unwind: {
+          path: '$category',
+          preserveNullAndEmptyArrays: true,
+        },
       },
     ]);
 
