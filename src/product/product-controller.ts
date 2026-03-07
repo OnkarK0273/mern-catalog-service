@@ -138,6 +138,7 @@ export class ProductController {
     };
 
     const updatedProduct = await this.productService.updateProduct(productId, productToUpdate as unknown as Product);
+    this.logger.info(`updated product`, { id: updatedProduct?._id });
     res.json({ id: updatedProduct?._id });
   };
 
@@ -170,7 +171,7 @@ export class ProductController {
         image: this.storage.getObjectUri(product.image),
       };
     });
-
+    this.logger.info(`Get all products list`);
     res.json({
       data: finalProducts,
       total: products.total,
@@ -188,7 +189,7 @@ export class ProductController {
       return next(createHttpError(404, 'Product not found'));
     }
 
-    this.logger.info(`Getting category`, { id: product._id });
+    this.logger.info(`Getting Product`, { id: product._id });
     res.json(product);
   };
 
@@ -207,7 +208,7 @@ export class ProductController {
       }
     }
     await this.productService.deleteById(productId);
-    this.logger.info(`Category has been deleted`, { id: productId });
+    this.logger.info(`Product has been deleted`, { id: productId });
     res.json({ id: productId });
   };
 }
