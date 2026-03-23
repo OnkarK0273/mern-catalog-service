@@ -1,5 +1,5 @@
 import { NextFunction, Response, Request } from 'express';
-import { CreateToppingRequest, Topping } from './topping.type';
+import { CreateToppingRequest, Topping, ToppingFilter } from './topping.type';
 import { validationResult } from 'express-validator';
 import createHttpError from 'http-errors';
 import { ToppingService } from './topping-service';
@@ -9,6 +9,8 @@ import { UploadedFile } from 'express-fileupload';
 import { v4 as uuidv4 } from 'uuid';
 import { AuthRequest } from '../common/types';
 import { Roles } from '../common/constants';
+import { PaginateQuery } from '../product/product-type';
+import mongoose from 'mongoose';
 
 export class ToppingController {
   constructor(
@@ -46,13 +48,14 @@ export class ToppingController {
       folder: 'topping',
     });
 
-    const { name, price, isPublish, tenantId } = req.body;
+    const { name, price, isPublish, tenantId, categoryId } = req.body;
 
     const topping = {
       name,
       price,
       isPublish,
       tenantId,
+      categoryId,
       image: uploadResult.filePath,
       imageFileId: uploadResult.fileId,
     };
@@ -111,20 +114,21 @@ export class ToppingController {
       if (existingProduct.imageFileId) {
         try {
           await this.storage.delete(existingProduct.imageFileId);
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (error) {
-          return next(createHttpError(400, 'Failed to delete old image from ImageKit:'));
+          // eslint-disable-next-line no-console
+          console.error('Storage delete failed', error);
         }
       }
     }
 
-    const { name, price, isPublish, tenantId } = req.body;
+    const { name, price, isPublish, tenantId, categoryId } = req.body;
 
     const toppingToUpdate = {
       name,
       price,
       isPublish,
       tenantId,
+      categoryId,
       image: updatedImagePath,
       imageFileId: updatedImageId,
     };
@@ -134,9 +138,39 @@ export class ToppingController {
   };
 
   index = async (req: Request, res: Response) => {
-    const toppings = await this.toppingService.getToppings();
+    const { q, tenantId, isPublish, page, limit, categoryId } = req.query;
+    const filters: ToppingFilter = {};
+    const paginate: PaginateQuery = {
+      page: 1,
+      limit: 10,
+    };
 
-    res.json(toppings);
+    if (page) paginate.page = parseInt(page as string);
+
+    if (limit) paginate.limit = parseInt(limit as string);
+
+    if (isPublish === 'true') filters.isPublish = true;
+
+    if (tenantId) filters.tenantId = tenantId as string;
+
+    if (categoryId && mongoose.Types.ObjectId.isValid(categoryId as string))
+      filters.categoryId = new mongoose.Types.ObjectId(categoryId as string);
+
+    const toppings = await this.toppingService.getToppings(q as string, filters, paginate);
+
+    const finalToppings = (toppings.data as Topping[]).map((topping: Topping) => {
+      return {
+        ...topping,
+        image: this.storage.getObjectUri(topping.image),
+      };
+    });
+    this.logger.info(`Get all topping list`);
+    res.json({
+      data: finalToppings,
+      total: toppings.total,
+      pageSize: toppings.pageSize,
+      currentPage: toppings.currentPage,
+    });
   };
 
   getOne = async (req: Request, res: Response, next: NextFunction) => {

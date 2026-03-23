@@ -1,5 +1,7 @@
+import { PaginateQuery } from '../product/product-type';
 import toppingModel from './topping.model';
-import { Topping } from './topping.type';
+import { Topping, ToppingFilter } from './topping.type';
+import { paginationLabels } from '../config/pagination';
 
 export class ToppingService {
   async createTopping(topping: Topping) {
@@ -7,7 +9,7 @@ export class ToppingService {
   }
 
   async updateTopping(toppingId: string, topping: Partial<Topping>) {
-    return await toppingModel.findByIdAndUpdate(
+    return (await toppingModel.findByIdAndUpdate(
       {
         _id: toppingId,
       },
@@ -17,11 +19,27 @@ export class ToppingService {
       {
         new: true,
       },
-    );
+    )) as Topping;
   }
 
-  async getToppings() {
-    return await toppingModel.find();
+  async getToppings(q: string, filters: ToppingFilter, paginateQuery: PaginateQuery) {
+    const matchQuery: ToppingFilter = { ...filters };
+
+    // 2. Conditionally add the search query if 'q' is present
+    if (q) {
+      matchQuery.name = new RegExp(q, 'i');
+    }
+
+    const aggregate = toppingModel.aggregate([
+      {
+        $match: matchQuery,
+      },
+    ]);
+
+    return toppingModel.aggregatePaginate(aggregate, {
+      ...paginateQuery,
+      customLabels: paginationLabels,
+    });
   }
 
   async getById(toppingId: string) {
@@ -29,6 +47,6 @@ export class ToppingService {
   }
 
   async deleteById(toppingId: string) {
-    return await toppingModel.findByIdAndDelete(toppingId);
+    return (await toppingModel.findByIdAndDelete(toppingId)) as unknown as Topping;
   }
 }

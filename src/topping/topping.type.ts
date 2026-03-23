@@ -8,9 +8,17 @@ export interface Topping {
   image: string;
   imageFileId: string;
   isPublish: boolean;
+  categoryId: string;
   tenantId: string;
 }
 
 export interface CreateToppingRequest extends Request {
   body: Topping;
+}
+
+export interface ToppingFilter {
+  tenantId?: string;
+  categoryId?: mongoose.Types.ObjectId;
+  isPublish?: boolean;
+  name?: RegExp;
 }

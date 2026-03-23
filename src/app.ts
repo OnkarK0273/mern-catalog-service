@@ -31,7 +31,7 @@ app.use((req, res, next) => {
 
 app.use('/categories', categoryRouter);
 app.use('/products', productRouter);
-app.use('/topping', toppingRouter);
+app.use('/toppings', toppingRouter);
 
 // Routes
 app.get('/health', (req: Request, res: Response) => {

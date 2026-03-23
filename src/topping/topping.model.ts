@@ -1,8 +1,7 @@
 import mongoose from 'mongoose';
-import { Topping } from './topping.type';
 import mongooseAggregatePaginate from 'mongoose-aggregate-paginate-v2';
 
-const toppingSchema = new mongoose.Schema<Topping>(
+const toppingSchema = new mongoose.Schema(
   {
     name: {
       type: String,
@@ -15,6 +14,10 @@ const toppingSchema = new mongoose.Schema<Topping>(
     tenantId: {
       type: String,
       required: true,
+    },
+    categoryId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Category',
     },
     image: {
       type: String,

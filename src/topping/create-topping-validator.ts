@@ -7,6 +7,7 @@ export default [
     .isString()
     .withMessage('Product name should be a string'),
   body('tenantId').exists().withMessage('Tenant id field is required'),
+  body('categoryId').exists().withMessage('Category id field is required'),
   body('price').exists().withMessage('Tenant id field is required'),
   body('image').custom((value, { req }) => {
     if (!req.files) throw new Error('Product image is required');
