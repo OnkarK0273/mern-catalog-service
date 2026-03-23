@@ -1,7 +1,7 @@
 import { validationResult } from 'express-validator';
 import createHttpError from 'http-errors';
 import { NextFunction, Response, Request } from 'express';
-import { CreateProductRequest, Filter, PaginateQuery, Product } from './product-type';
+import { CreateProductRequest, PaginateQuery, Product, ProductFilter } from './product-type';
 import { ProductService } from './product-service';
 import { FileStorage } from '../common/types/storage';
 import { UploadedFile } from 'express-fileupload';
@@ -116,9 +116,9 @@ export class ProductController {
       if (existingProduct.imageFileId) {
         try {
           await this.storage.delete(existingProduct.imageFileId);
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (error) {
-          return next(createHttpError(400, 'Failed to delete old image from ImageKit:'));
+          // eslint-disable-next-line no-console
+          console.error('Storage delete failed', error);
         }
       }
     }
@@ -145,7 +145,7 @@ export class ProductController {
   index = async (req: Request, res: Response) => {
     const { q, tenantId, categoryId, isPublish, page, limit } = req.query;
 
-    const filters: Filter = {};
+    const filters: ProductFilter = {};
     const paginate: PaginateQuery = {
       page: 1,
       limit: 10,

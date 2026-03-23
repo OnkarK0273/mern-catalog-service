@@ -1,6 +1,6 @@
 import { paginationLabels } from '../config/pagination';
 import productModel from './product-model';
-import { Filter, PaginateQuery, Product } from './product-type';
+import { ProductFilter, PaginateQuery, Product } from './product-type';
 
 export class ProductService {
   async createProduct(product: Product) {
@@ -19,8 +19,8 @@ export class ProductService {
     )) as Product;
   }
 
-  async getProducts(q: string, filters: Filter, paginateQuery: PaginateQuery) {
-    const matchQuery: Filter = { ...filters };
+  async getProducts(q: string, filters: ProductFilter, paginateQuery: PaginateQuery) {
+    const matchQuery: ProductFilter = { ...filters };
 
     // 2. Conditionally add the search query if 'q' is present
     if (q) {
