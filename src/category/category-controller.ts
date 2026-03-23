@@ -70,6 +70,8 @@ export class CategoeryController {
   };
 
   index = async (req: Request, res: Response) => {
+    // const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+    // await sleep(10000);
     const categories = await this.categoryService.getAll();
     this.logger.info(`Getting categories list`);
     res.json(categories);
