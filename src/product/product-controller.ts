@@ -10,12 +10,14 @@ import { Logger } from 'winston';
 import { AuthRequest } from '../common/types';
 import { Roles } from '../common/constants';
 import mongoose from 'mongoose';
+import { MessageProducerBroker } from '../common/types/broker';
 
 export class ProductController {
   constructor(
     private productService: ProductService,
     private storage: FileStorage,
     private logger: Logger,
+    private broker: MessageProducerBroker,
   ) {}
 
   create = async (req: CreateProductRequest, res: Response, next: NextFunction) => {
@@ -63,6 +65,13 @@ export class ProductController {
 
     const newProduct = await this.productService.createProduct(product as unknown as Product);
     this.logger.info(`Created product`, { id: newProduct._id });
+    await this.broker.sendMessage(
+      'product',
+      JSON.stringify({
+        id: newProduct._id,
+        priceConfiguration: newProduct.priceConfiguration,
+      }),
+    );
     res.json({ id: newProduct._id });
   };
 
@@ -139,6 +148,13 @@ export class ProductController {
 
     const updatedProduct = await this.productService.updateProduct(productId, productToUpdate as unknown as Product);
     this.logger.info(`updated product`, { id: updatedProduct?._id });
+    await this.broker.sendMessage(
+      'product',
+      JSON.stringify({
+        id: updatedProduct._id,
+        priceConfiguration: updatedProduct.priceConfiguration,
+      }),
+    );
     res.json({ id: updatedProduct?._id });
   };
 

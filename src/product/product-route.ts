@@ -10,11 +10,13 @@ import fileUpload from 'express-fileupload';
 import { ImageKitStorage } from '../common/services/ImageKitStorage';
 import logger from '../config/logger';
 import updateProductValidator from './update-product-validator';
+import { createMessageProducerBroker } from '../common/factories/brokerFactory';
 
 const router = express.Router();
 const productService = new ProductService();
 const imageKitStorage = new ImageKitStorage();
-const productController = new ProductController(productService, imageKitStorage, logger);
+const broker = createMessageProducerBroker();
+const productController = new ProductController(productService, imageKitStorage, logger, broker);
 
 router.route('/').post(
   authenticate,
