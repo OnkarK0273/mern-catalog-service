@@ -10,12 +10,14 @@ import fileUpload from 'express-fileupload';
 import { Roles } from '../common/constants';
 import { asyncWrapper } from '../common/utils/wrapper';
 import updateToppingValidator from './update-topping-validator';
+import { createMessageProducerBroker } from '../common/factories/brokerFactory';
 
 const router = express.Router();
 
 const imageKitStorage = new ImageKitStorage();
 const toppingService = new ToppingService();
-const toppingController = new ToppingController(toppingService, logger, imageKitStorage);
+const broker = createMessageProducerBroker();
+const toppingController = new ToppingController(toppingService, logger, imageKitStorage, broker);
 
 router.route('/').post(
   authenticate,

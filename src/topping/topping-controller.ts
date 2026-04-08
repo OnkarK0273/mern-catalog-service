@@ -11,12 +11,14 @@ import { AuthRequest } from '../common/types';
 import { Roles } from '../common/constants';
 import { PaginateQuery } from '../product/product-type';
 import mongoose from 'mongoose';
+import { MessageProducerBroker } from '../common/types/broker';
 
 export class ToppingController {
   constructor(
     private toppingService: ToppingService,
     private logger: Logger,
     private storage: FileStorage,
+    private broker: MessageProducerBroker,
   ) {}
 
   create = async (req: CreateToppingRequest, res: Response, next: NextFunction) => {
@@ -62,6 +64,13 @@ export class ToppingController {
 
     const newTopping = await this.toppingService.createTopping(topping as unknown as Topping);
     this.logger.info(`Created topping`, { id: newTopping._id });
+    await this.broker.sendMessage(
+      'topping',
+      JSON.stringify({
+        id: newTopping._id,
+        price: newTopping.price,
+      }),
+    );
     res.json({ id: newTopping._id });
   };
 
@@ -134,6 +143,13 @@ export class ToppingController {
     };
 
     const updatedProduct = await this.toppingService.updateTopping(toppingId, toppingToUpdate as unknown as Topping);
+    await this.broker.sendMessage(
+      'topping',
+      JSON.stringify({
+        id: updatedProduct._id,
+        price: updatedProduct.price,
+      }),
+    );
     res.json({ id: updatedProduct?._id });
   };
 
